@@ -2,98 +2,119 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Andrea's Cartoon GIFs</title>
-    <style type="text/css">
-        button,
-        div,
-        form,
-        input {
-            margin: 10px;
-        }
-    </style>
+  <meta charset="utf-8">
+  <style type="text/css">
+    button,
+    div,
+    form,
+    input {
+      margin: 10px;
+    }
+  </style>
+  <title>Cartoon Giphy</title>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Cartoon Search</h1>
+<div class="container">
+    <div id="buttons-view"></div>
 
-        <div id="buttons-view"></div>
+  <form id="cartoon-form">
+    <label for="cartoon-input">Add your favorite cartoon!</label>
+    <input type="text" id="cartoon-input">
+    <br>
 
-        <form id="cartoon-form">
-            <label for="cartoon-input">Add a cartoon of your choice!</label>
-            <input type="text" id="cartoon-input">
-            <br>
-
-            <input id="add-cartoon" type="submit" value="Add a cartoon of your choice!">
-        </form>
-
-        <div id="cartoon-view">
-        
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script type="text/javascript">
-            var topics = ["The Simpsons", "Bob's Burgers", "American Dad", "Archer", "Rick and Morty", "Ren and Stimpy", "Beavis and Butthead", "Cow and Chicken", "The PJ's", "Rocko's Modern Life", "The Boondocks", "Fraggle Rock", "Futurama", "Care Bears"];
-            function displayCartoonInfo() {
-               var cartoon = $(this).attr("username");
-               var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=7T2AwhXBS4Npw8okLWSh9y0Y9aFXOpUs&q=" + cartoon + "&limit=10&offset=0&rating=G&lang=en";
-
-                $.ajax({
-                    url: queryURL,
-                    method: "GET",
-                }).then(function(response) {
-                    var cartoonDiv = $("<div class='cartoon'>");
-                    var rating = response.data.rating;
-                    var pOne = $("<p>").text("Rating: " + rating);
-                    cartoonDiv.append(pOne);
-                    var gifURL = response.data.bitly_gif_url;
-                    var gif = $("<gif>").attr("src", gifURL);
-                    cartoonDiv.append(gif);
-                    $("#cartoon-view").prepend(cartoonDiv);
-                });
-            }
-
-            function renderButtons() {
-                $("#buttons-view").empty();
-                for (var i = 0; i < topics.length; i++); {
-                   var a = $("<button>"); 
-                   a.addClass("cartoon-btn");
-                   a.attr("username", topics[i]);
-                   a.text(topics[i]);
-                   $("#cartoon-view").append(a);
-                }
-            }
-
-            $("#add-cartoon").on("click", function(event) {
-                event.preventDefault();
-                var cartoons = $("#cartoon-input").val().trim();
-                cartoon.push(cartoons);
-                renderButtons();
-            });     
-
-            $(document).on("click", ".cartoon-btn", displayCartoonInfo);
-            renderButtons();
-            $("#cartoon-view").text()
-
-
-         //$(".gif").on("click", function () {
-         //   var state = $(this).attr("data-state");
-
-
-            // If the clicked image's state is still, update its src attribute to what its data-animate value is.
-            // Then, set the image's data-state to animate
-            // Else set src to the data-still value
-           //if (state === "still") {
-            //    $(this).attr("src", $(this).attr("data-animate"));
-             //   $(this).attr("data-state", "animate");
-           // } else {
-            //    $(this).attr("src", $(this).attr("data-still"));
-             //   $(this).attr("data-state", "still");
-           // }
-       // });
-    </script>
+    <!-- Button triggers new movie to be added -->
+    <input id="add-cartoon" type="submit" value="Add your favorite cartoon!">
+  </form>
+  
+  <div id="gifs-appear-here">
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    
+    var topics = ["The Simpsons", "American Dad", "Futurama", "Bob's Burgers", "Archer", "Rick and Morty"];
+
+    function displayCartoonInfo() {
+
+      var cartoon = $(this).attr("cartoon-name");
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + cartoon + "&api_key=7T2AwhXBS4Npw8okLWSh9y0Y9aFXOpUs&limit=10";
+      
+
+
+      // Creating an AJAX call for the specific movie button being clicked
+      $.ajax({
+        url: queryURL,
+        method: "GET"
+      }).then(function(response) {
+        console.log(response);
+        var results = response.data;
+
+        // Looping over every result item
+        for (var i = 0; i < results.length; i++) {
+
+          // Only taking action if the photo has an appropriate rating
+          if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+            // Creating a div for the gif
+            var gifDiv = $("<div>");
+
+            // Storing the result item's rating
+            var rating = results[i].rating;
+
+            // Creating a paragraph tag with the result item's rating
+            var p = $("<p>").text("Rating: " + rating);
+
+            // Creating an image tag
+            var cartoonImage = $("<img>");
+
+            // Giving the image tag an src attribute of a proprty pulled off the
+            // result item
+            cartoonImage.attr("src", results[i].url);
+
+            // Appending the paragraph and personImage we created to the "gifDiv" div we created
+            gifDiv.append(p);
+            gifDiv.append(cartoonImage);
+
+            // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
+            $("#gifs-appear-here").prepend(gifDiv);
+          }
+        }
+      });
+    };
+
+    function renderButtons() {
+
+       $("#buttons-view").empty();
+
+      // Looping through the array of movies
+      for (var i = 0; i < topics.length; i++) {
+
+        var a = $("<button>");
+        a.addClass("cartoon-btn");
+        a.attr("cartoon-name", topics[i]);
+        a.text(topics[i]);
+        $("#buttons-view").append(a);
+      }
+    }
+      $("#add-cartoon").on("click", function(event) {
+        event.preventDefault();
+        // This line grabs the input from the textbox
+        var cartoons = $("#cartoon-input").val().trim();
+
+        // Adding cartoon from the textbox to our array
+        cartoons.push(topics);
+
+        // Calling renderButtons which handles the processing of our topics array
+        renderButtons();
+      });
+
+      // Adding a click event listener to all elements with a class of "cartoon-btn"
+      $(document).on("click", ".cartoon-btn", displayCartoonInfo);
+
+      // Calling the renderButtons function to display the intial buttons
+      renderButtons();
+  </script>
+ </div> 
 </body>
 
 </html>
