@@ -2,119 +2,43 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <style type="text/css">
-    button,
-    div,
-    form,
-    input {
-      margin: 10px;
-    }
-  </style>
-  <title>Cartoon Giphy</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>GIFTASTIC</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
 </head>
 
-<body>
-<div class="container">
-    <div id="buttons-view"></div>
+<body style="background-color: pink;">
 
-  <form id="cartoon-form">
-    <label for="cartoon-input">Add your favorite cartoon!</label>
-    <input type="text" id="cartoon-input">
-    <br>
+    <div id="buttonsArea" class="col-lg-12 text-center"></div>
 
-    <!-- Button triggers new movie to be added -->
-    <input id="add-cartoon" type="submit" value="Add your favorite cartoon!">
-  </form>
-  
-  <div id="gifs-appear-here">
-  </div>
+    <div class="container">
+        <div class="row">
+            <h1 class="text-center" style="color:white; margin: 2% 33%; font-variant: all-petite-caps;">ANDREA'S
+                GIFTASTIC PAGE</h1>
+            <div id="searches" class="col-lg-9 text-center"></div>
+            <div class="col-md-3">
+                <form class="form-inline" id="search-form">
+                    <label for="search-input"
+                        style="font-size: large; margin-top: 4%; margin-bottom: 3%; margin-left: 0.3%; color:black">Add
+                        A Search Topic!</label><br>
+                    <input type="text" id="search-input"><br>
+                    <button type="submit" class="btn btn-primary" style="margin-top:3%">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+   
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script type="text/javascript">
-    
-    var topics = ["The Simpsons", "American Dad", "Futurama", "Bob's Burgers", "Archer", "Rick and Morty"];
+    <!-- jQuery link -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- javascript -->
+    <script src="assets/javascript/logic.js" type="text/javascript"></script>
 
-    function displayCartoonInfo() {
-
-      var cartoon = $(this).attr("cartoon-name");
-      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + cartoon + "&api_key=7T2AwhXBS4Npw8okLWSh9y0Y9aFXOpUs&limit=10";
-      
-
-
-      // Creating an AJAX call for the specific movie button being clicked
-      $.ajax({
-        url: queryURL,
-        method: "GET"
-      }).then(function(response) {
-        console.log(response);
-        var results = response.data;
-
-        // Looping over every result item
-        for (var i = 0; i < results.length; i++) {
-
-          // Only taking action if the photo has an appropriate rating
-          if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
-            // Creating a div for the gif
-            var gifDiv = $("<div>");
-
-            // Storing the result item's rating
-            var rating = results[i].rating;
-
-            // Creating a paragraph tag with the result item's rating
-            var p = $("<p>").text("Rating: " + rating);
-
-            // Creating an image tag
-            var cartoonImage = $("<img>");
-
-            // Giving the image tag an src attribute of a proprty pulled off the
-            // result item
-            cartoonImage.attr("src", results[i].url);
-
-            // Appending the paragraph and personImage we created to the "gifDiv" div we created
-            gifDiv.append(p);
-            gifDiv.append(cartoonImage);
-
-            // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
-            $("#gifs-appear-here").prepend(gifDiv);
-          }
-        }
-      });
-    };
-
-    function renderButtons() {
-
-       $("#buttons-view").empty();
-
-      // Looping through the array of movies
-      for (var i = 0; i < topics.length; i++) {
-
-        var a = $("<button>");
-        a.addClass("cartoon-btn");
-        a.attr("cartoon-name", topics[i]);
-        a.text(topics[i]);
-        $("#buttons-view").append(a);
-      }
-    }
-      $("#add-cartoon").on("click", function(event) {
-        event.preventDefault();
-        // This line grabs the input from the textbox
-        var cartoons = $("#cartoon-input").val().trim();
-
-        // Adding cartoon from the textbox to our array
-        cartoons.push(topics);
-
-        // Calling renderButtons which handles the processing of our topics array
-        renderButtons();
-      });
-
-      // Adding a click event listener to all elements with a class of "cartoon-btn"
-      $(document).on("click", ".cartoon-btn", displayCartoonInfo);
-
-      // Calling the renderButtons function to display the intial buttons
-      renderButtons();
-  </script>
- </div> 
 </body>
 
 </html>
